@@ -46,17 +46,22 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
-
+    /**
+     * Relación con la  tabla roles
+     */
     public function roles()
     {
         return $this->belongsToMany(Role::class, 'role_user');
     }
 
-    
-    public function hasPermission($perm){
-        foreach ($this->roles as $role){
-            foreach($role->permissions as $permission){
-                if( $permission->name === $perm){
+    /**
+     * Se buscan los permisos de los roles del usuario
+     */
+    public function hasPermission($perm)
+    {
+        foreach ($this->roles as $role) {
+            foreach ($role->permissions as $permission) {
+                if ($permission->name === $perm) {
                     return $permission->name === $perm;
                 }
             }

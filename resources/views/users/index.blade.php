@@ -23,9 +23,9 @@
                         </div>
                     @endif
                     <div class="p-6 text-gray-900">
-                    <a href="{{ route('users.create') }}"
-                    class="text-blue-600 hover:text-blue-900">CREAR NUEVO</a></div>
-                    <div class="relative overflow-x-auto">
+                        <a href="{{ route('users.create') }}" class="text-blue-600 hover:text-blue-900">CREAR NUEVO</a>
+                    </div>
+                    <div class="relative overflow-x-auto" id="tableUsers">
                         <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                             <thead
                                 class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -67,8 +67,11 @@
                                             {{ $user->roles->pluck('name')->join(', ') }}
                                         </td>
                                         <td class="px-6 py-4">
-                                            <a href="{{ route('users.edit', $user->id) }}"
-                                                class="text-blue-600 hover:text-blue-900">Editar</a>
+                                            @can('Editar', $user)
+                                                <a href="{{ route('users.edit', $user->id) }}"
+                                                    class="text-blue-600 hover:text-blue-900">Editar</a>
+                                            @endcan
+                                            @can('Eliminar', $user)
                                             <form action="{{ route('users.destroy', $user->id) }}" method="POST"
                                                 class="inline"
                                                 onsubmit="return confirm('¿Estás seguro de eliminar este usuario?');">
@@ -77,6 +80,7 @@
                                                 <button type="submit"
                                                     class="text-red-600 hover:text-red-900">Eliminar</button>
                                             </form>
+                                            @endcan
                                         </td>
                                     </tr>
                                 @endforeach

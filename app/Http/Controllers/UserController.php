@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rules;
 
 class UserController extends Controller
@@ -17,23 +18,8 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
-        // Filtrar por roles y usuarios inactivos
-        /*$query = User::query();
-
-        if ($request->has('role')) {
-            $query->whereHas('roles', function ($query) use ($request) {
-                $query->where('roles.id', $request->input('role'));
-            });
-        }
-
-        if ($request->has('status') && $request->input('status') != 'all') {
-            $query->where('status', $request->input('status'));
-        }
-        $users = $query->get();
-        $roles = Role::all(); // Todos los roles para el filtro
-        */
-
-        if(Gate::allows('Crear')){
+        // Si tiene rol de lectura puede ver el listado de usuarios
+        if(Gate::allows('Lectura')){
             $users = User::where('is_active', true)->get();
             $roles = Role::where('is_active', true)->get();
             return view('users.index', compact('users', 'roles'));
@@ -91,7 +77,7 @@ class UserController extends Controller
      */
     public function edit(string $id)
     {
-        $users = User::where('is_active', true)->get();
+        $users = User::findOrFail($id);
         $roles = Role::where('is_active', true)->get();
         return view('users.edit', compact('roles', 'users'));
     }
@@ -101,14 +87,51 @@ class UserController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        try {
+            // Validar los datos
+            $request->validate([
+                'name' => ['required', 'string', 'max:255'],
+                'email' => ['required', 'string', 'lowercase', 'email', 'max:255']
+            ]);
+
+            // Obtener el usuario y actualizar
+            $user = User::findOrFail($id);
+            $user->update([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => $request->filled('password') ? Hash::make($request->password) : $user->password,
+            ]);
+
+            // Sincronizar los roles seleccionados
+            if ($request->has('roles')) {
+                $user->roles()->sync($request->roles);
+            } else {
+                // Si no se seleccionó ningún rol, elimina todos los roles relacionados
+                $user->roles()->detach();
+            }
+
+            return redirect()->route('users.index')->with('success', 'Usuario actualizado exitosamente.');
+        } catch (\Exception $e) {
+            Log::error('Error al actualizar el usuario: ' . $e->getMessage());
+            return back()->withErrors(['error' => 'Error al actualizar el usuario']);
+        }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(User $user)
     {
-        //
+        try {
+            $user->is_active = false;
+            $user->save();
+            // eliminar roles asociados
+            $user->roles()->detach();
+
+            return redirect()->route('users.index')->with('success', 'Usuario eliminado correctamente');
+        } catch (\Exception $e) {
+            Log::error('Error al eliminar el usuario: ' . $e->getMessage());
+            return back()->withErrors(['error' => 'Error al eliminar el usuario']);
+        }
     }
 }

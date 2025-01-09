@@ -21,19 +21,21 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Comprobamos que el usuario tenga el rol adecuado o sea el dueño del recurso
         Gate::define('Editar', function ($user) {
-            // Comprobamos que el usuario tenga el rol adecuado o sea el dueño del recurso
             return $user->hasPermission('Editar');
         });
 
         Gate::define('Lectura', function ($user) {
-            // Comprobamos que el usuario tenga el rol adecuado o sea el dueño del recurso
             return $user->hasPermission('Lectura');
         });
 
         Gate::define('Crear', function ($user) {
-            // Comprobamos que el usuario tenga el rol adecuado o sea el dueño del recurso
             return $user->hasPermission('Crear');
+        });
+
+        Gate::define('Eliminar', function ($user) {
+            return $user->hasPermission('Eliminar');
         });
     }
 }
