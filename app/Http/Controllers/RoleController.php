@@ -40,6 +40,7 @@ class RoleController extends Controller
                 'permissions.*' => 'exists:permissions,id',
             ], [
                 'name.unique' => 'El nombre del rol ya existe.',
+                'name.required' => 'El nombre es obligatorio'
             ]);
 
             // Crear el rol
@@ -55,7 +56,7 @@ class RoleController extends Controller
         } catch (\Exception $e) {
             // Manejar el error
             Log::error('Error al crear el rol: ' . $e->getMessage());
-            return back()->withErrors(['error' => 'Error al crear el rol']);
+            return back()->withErrors(['error' => $e->getMessage()]);
         }
     }
 
@@ -88,6 +89,8 @@ class RoleController extends Controller
                 'name' => 'required|string|max:255',
                 'permissions' => 'array',
                 'permissions.*' => 'exists:permissions,id',
+            ],[
+                'name.required' => 'El nombre es obligatorio'
             ]);
 
             // Obtener el rol
@@ -105,7 +108,7 @@ class RoleController extends Controller
             return redirect()->route('roles.index')->with('success', 'Rol actualizado exitosamente.');
         } catch (\Exception $e) {
             Log::error('Error al actualizar el rol: ' . $e->getMessage());
-            return back()->withErrors(['error' => 'Error al actualizar el rol']);
+            return back()->withErrors(['error' => $e->getMessage()]);
         }
     }
 

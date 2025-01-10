@@ -22,10 +22,18 @@
                             {{ session('success') }}
                         </div>
                     @endif
+                    @can('Crear', $user)
                     <div class="p-6 text-gray-900">
                         <a href="{{ route('users.create') }}" class="text-blue-600 hover:text-blue-900">CREAR NUEVO</a>
                     </div>
+                    @endcan
                     <div class="relative overflow-x-auto" id="tableUsers">
+                        <select name="roles" id="roles" onchange="filterRoles()">
+                            @foreach ($roles as $role)
+                                <option value="{{ $role->id }}">{{ $role->name }}</option>
+                            @endforeach
+                        </select>
+
                         <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                             <thead
                                 class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -72,14 +80,14 @@
                                                     class="text-blue-600 hover:text-blue-900">Editar</a>
                                             @endcan
                                             @can('Eliminar', $user)
-                                            <form action="{{ route('users.destroy', $user->id) }}" method="POST"
-                                                class="inline"
-                                                onsubmit="return confirm('¿Estás seguro de eliminar este usuario?');">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit"
-                                                    class="text-red-600 hover:text-red-900">Eliminar</button>
-                                            </form>
+                                                <form action="{{ route('users.destroy', $user->id) }}" method="POST"
+                                                    class="inline"
+                                                    onsubmit="return confirm('¿Estás seguro de eliminar este usuario?');">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit"
+                                                        class="text-red-600 hover:text-red-900">Eliminar</button>
+                                                </form>
                                             @endcan
                                         </td>
                                     </tr>

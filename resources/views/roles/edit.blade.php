@@ -9,15 +9,23 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
-                    <form action="" method="POST">
+                    @if ($errors->any())
+                        <div class="bg-red-500 text-white font-bold rounded-lg p-4 my-4">
+                            <ul>
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+                    <form action="{{ route('roles.update', $role->id) }}" method="POST">
                         @csrf
                         @method('PUT')
                         <div class="pl-2">
                             <div class="mb-6">
                                 <label for="nombre rol" class="mr-3 text-lg font-medium">Nombre del Rol:</label>
                                 <input type="text" name="name" value="{{ $role->name }}"
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                    required>
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                             </div>
                         </div>
                         <div class="pl-2">
@@ -25,13 +33,13 @@
                                 <label for="permisos" class="mr-3 text-lg font-medium">Seleccione los permisos:</label>
                                 <div class="pl-2 pt-4 pb-3">
                                     <ul
-                                        class="w-48 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white">                                 
+                                        class="w-48 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                                         @foreach ($permissions as $permission)
                                             <li
                                                 class="w-full border-b border-gray-200 rounded-t-lg dark:border-gray-600">
                                                 <div class="flex items-center ps-3">
-                                                    <input id="permission-{{ $permission->id }}" name="permissions[]" type="checkbox"
-                                                        value="{{ $permission->id }}"
+                                                    <input id="permission-{{ $permission->id }}" name="permissions[]"
+                                                        type="checkbox" value="{{ $permission->id }}"
                                                         class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
                                                         {{ $role->permissions->contains($permission->id) ? 'checked' : '' }}>
                                                     <label for="vue-checkbox"
