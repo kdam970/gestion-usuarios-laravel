@@ -18,6 +18,12 @@ Puedes clonar el repositorio utilizando el siguiente comando:
 ```bash
 git clone https://github.com/kdam970/gestion-usuarios-laravel.git
 
+# Instala dependencias de composer
+composer install
+
+# Instalas dependencias npm
+npm install
+
 # Ejecuta las migraciones para crear las tablas necesarias en la base de datos
 php artisan migrate
 
