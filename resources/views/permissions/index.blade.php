@@ -77,6 +77,9 @@
                                 @endforeach
                             </tbody>
                         </table>
+                        <div class="mt-4">
+                            {{ $permissions->links() }}
+                        </div>
                     </div>
                 </div>
             </div>

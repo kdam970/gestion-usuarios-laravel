@@ -26,8 +26,8 @@ class AppServiceProvider extends ServiceProvider
             return $user->hasPermission('Editar');
         });
 
-        Gate::define('Lectura', function ($user) {
-            return $user->hasPermission('Lectura');
+        Gate::define('Leer', function ($user) {
+            return $user->hasPermission('Leer');
         });
 
         Gate::define('Crear', function ($user) {

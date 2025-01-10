@@ -23,8 +23,8 @@
                         </div>
                     @endif
                     <div class="p-6 text-gray-900">
-                    <a href="{{ route('roles.create') }}"
-                    class="text-blue-600 hover:text-blue-900">CREAR NUEVO</a></div>
+                        <a href="{{ route('roles.create') }}" class="text-blue-600 hover:text-blue-900">CREAR NUEVO</a>
+                    </div>
                     <div class="relative overflow-x-auto">
                         <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                             <thead
@@ -68,6 +68,9 @@
                                 @endforeach
                             </tbody>
                         </table>
+                        <div class="mt-4">
+                            {{ $roles->links() }}
+                        </div>
                     </div>
                 </div>
             </div>

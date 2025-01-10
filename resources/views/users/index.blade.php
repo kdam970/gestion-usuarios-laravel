@@ -22,18 +22,28 @@
                             {{ session('success') }}
                         </div>
                     @endif
-                    @can('Crear', $user)
-                    <div class="p-6 text-gray-900">
-                        <a href="{{ route('users.create') }}" class="text-blue-600 hover:text-blue-900">CREAR NUEVO</a>
-                    </div>
+                    @can('Crear', $users)
+                        <div class="p-6 text-gray-900">
+                            <a href="{{ route('users.create') }}" class="text-blue-600 hover:text-blue-900">CREAR NUEVO</a>
+                        </div>
                     @endcan
-                    <div class="relative overflow-x-auto" id="tableUsers">
-                        <select name="roles" id="roles" onchange="filterRoles()">
+                    <div class="flex items-center mb-4">
+                        <select name="roles" id="roles" class="mr-4" onchange="filterRoles()">
+                            <option value="">-- Todos los Roles --</option>
                             @foreach ($roles as $role)
-                                <option value="{{ $role->id }}">{{ $role->name }}</option>
+                                <option value="{{ $role->id }}" @if ($selectedRole == $role->id) selected @endif>
+                                    {{ $role->name }}
+                                </option>
                             @endforeach
                         </select>
+                    </div>
+                    <div class="flex items-center mb-4">
+                        <input type="checkbox" id="showAllUsers" name="show_all" class="mr-2"
+                            @if ($showAll) checked @endif onchange="toggleShowAll()" />
+                        <label for="showAllUsers">Mostrar todos los usuarios</label>
+                    </div>
 
+                    <div class="relative overflow-x-auto" id="tableUsers">
                         <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                             <thead
                                 class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -94,9 +104,48 @@
                                 @endforeach
                             </tbody>
                         </table>
+                        <div class="mt-4">
+                            {{ $users->links() }}
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    <script>
+        /*
+         * Se encarga de realizar el filtro por roles.
+         * */
+        function filterRoles() {
+            const roleId = document.getElementById('roles').value;
+            // Se valida si tiene el filtro de mostrar todos los usuarios.
+            const showAll = document.getElementById('showAllUsers')?.checked || false;
+            const url = new URL(window.location.href);
+
+            if (roleId) {
+                url.searchParams.set('role', roleId);
+            } else {
+                url.searchParams.delete('role');
+            }
+            if (showAll) {
+                url.searchParams.set('show_all', '1');
+            }
+
+            window.location.href = url.toString();
+        }
+
+        /**
+         * Evento encargado de traer todos los usuarios (activos e inactivos)
+         * */
+        function toggleShowAll() {
+            const showAll = document.getElementById('showAllUsers').checked;
+            const url = new URL(window.location.href);
+            if (showAll) {
+                url.searchParams.set('show_all', '1');
+            } else {
+                url.searchParams.delete('show_all');
+            }
+            window.location.href = url.toString();
+        }
+    </script>
 </x-app-layout>
